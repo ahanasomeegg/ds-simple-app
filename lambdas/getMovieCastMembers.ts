@@ -4,6 +4,7 @@ import {
   DynamoDBDocumentClient,
   QueryCommand,
   QueryCommandInput,
+  GetCommand,
 } from "@aws-sdk/lib-dynamodb";
 
 const ddbDocClient = createDocumentClient();
@@ -66,6 +67,18 @@ export const handler: Handler = async (event, context) => {
     const commandOutput = await ddbDocClient.send(
       new QueryCommand(commandInput)
  );
+ let responseBody: any = { actors: commandOutput.Items || [] };
+ 
+ if (queryParams.movie === "true") {
+    console.log("Fetching movie details...");
+    const movieResponse = await ddbDocClient.send(
+      new GetCommand({
+        TableName: process.env.MOVIE_TABLE_NAME,
+        Key: { id: movieId },
+      })
+    );
+    responseBody.movie = movieResponse.Item || { message: "Movie not found" };
+  }
 
     return {
       statusCode: 200,

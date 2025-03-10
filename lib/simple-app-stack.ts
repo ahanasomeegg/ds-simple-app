@@ -131,6 +131,7 @@ export class SimpleAppStack extends cdk.Stack {
     memorySize: 128,
     environment: {
       CAST_TABLE_NAME: movieCastsTable.tableName,
+      MOVIE_TABLE_NAME: moviesTable.tableName,
       REGION: "eu-west-1",
   },
   }
